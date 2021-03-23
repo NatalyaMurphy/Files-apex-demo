@@ -13,8 +13,10 @@ export default class FileDemo extends LightningElement {
     @track contentVersionId;
     @api recordId;
     error;
+    status;
 
     createFile(){
+        this.status = undefined;
         this.textContent = this.template.querySelector('lightning-textarea').value;
         console.log('create file with:\n', this.textContent);
         createFile({ fileContent: this.textContent, parentId: this.recordId })
@@ -38,6 +40,7 @@ export default class FileDemo extends LightningElement {
     }
 
     createFileFaster(){
+        this.status = undefined;
         this.textContent = this.template.querySelector('lightning-textarea').value;
         console.log('create file with:\n', this.textContent);
         createFileFaster({ fileContent: this.textContent, parentId: this.recordId })
@@ -84,9 +87,33 @@ export default class FileDemo extends LightningElement {
 
     overwriteFile(){
         console.log('overwrite file');
+        this.status = 'Old ID: ' + this.contentVersionId;
+        this.textContent = this.template.querySelector('lightning-textarea').value;
+        console.log('create file with:\n', this.textContent);
+        overwriteFile({ 
+            fileContent: this.textContent, 
+            parentId: this.recordId,
+            contentVersionId: this.contentVersionId })
+        .then((result) => {
+            this.contentVersionId = result;
+            this.error = undefined;
+            this.dispatchEvent(new CustomEvent('fileupdate'));
+            getRecordNotifyChange([{recordId: this.recordId}]);
+            const event = new ShowToastEvent({
+                title: 'Success',
+                message: 'File Updated',
+                variant: 'success'
+            });
+            this.dispatchEvent(event);
+        })
+        .catch((error) => {
+            this.error = JSON.stringify(error);
+            this.contentVersionId = undefined;
+        });
     }
 
     deleteFile(){
+        this.status = undefined;
         console.log('delete file');
         console.log('read from file with ID ', this.contentVersionId);
         deleteFile({ contentVersionId: this.contentVersionId })

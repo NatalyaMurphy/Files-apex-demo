@@ -47,7 +47,18 @@ public with sharing class FileDemoController {
 
     @AuraEnabled public static Id overwriteFile(String fileContent, Id parentId, Id contentVersionId){
         Id versionId;
-        return versionId;   
+
+        ContentVersion cv = [SELECT ContentLocation, pathOnClient, title, 
+            ContentDocumentId
+        FROM ContentVersion
+        WHERE Id = :contentVersionId];
+
+        ContentVersion toInsert = cv.clone(false, false, false, false);
+        toInsert.VersionData = Blob.valueOf(fileContent);
+
+        insert toInsert;
+
+        return toInsert.Id;   
     }
 
     @AuraEnabled public static String readFromFile(Id contentVersionId ){
