@@ -35,8 +35,6 @@ export default class FileDemo extends LightningElement {
         .then((result) => {
             this.contentVersionId = result;
             this.error = undefined;
-            updateRecord({ fields: { Id: this.recordId } });
-
         })
         .catch((error) => {
             this.error = JSON.stringify(error);
@@ -45,7 +43,25 @@ export default class FileDemo extends LightningElement {
     }
 
     readFromFile(){
-        console.log('read from file');
+        console.log('read from file with ID ', this.contentVersionId);
+        readFromFile({ contentVersionId: this.contentVersionId })
+        .then((result) => {
+            console.log('file contents:\n', result);
+            this.textContent = result;
+            const textarea = this.template.querySelector('lightning-textarea');
+            textarea.focus();
+            try {
+            textarea.setRangeText(this.textContent, 0, 100, 'end');
+            } catch(e){
+                this.error = e;
+            }
+    
+            this.error = undefined;
+        })
+        .catch((error) => {
+            this.error = JSON.stringify(error);
+            this.textContent = undefined;
+        });
     }
 
     overwriteFile(){

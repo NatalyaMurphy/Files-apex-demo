@@ -1,13 +1,13 @@
 public with sharing class FileDemoController {
     @AuraEnabled public static Id createFile(String fileContent, Id parentId){
         Id versionId;
-
+        String first25 = fileContent.left(25);
 
 //Create ContentVersion
         ContentVersion cv = new ContentVersion(
             ContentLocation = 'S', // Salesforce. The other option is: 'E'
-            pathOnClient = 'Demo File.txt',
-            title = 'Demo File',
+            pathOnClient = first25 + '.txt',
+            title = first25,
             versionData = Blob.valueOf(fileContent)
         );
         insert cv;
@@ -30,11 +30,12 @@ public with sharing class FileDemoController {
 
     @AuraEnabled public static Id createFileFaster(String fileContent, Id parentId){
         Id versionId;
+        String first25 = fileContent.left(25);
 
         ContentVersion cv = new ContentVersion(
             ContentLocation = 'S', // Salesforce. The other option is: 'E'
-            pathOnClient = 'Demo File Shortcut.txt',
-            title = 'Demo File Shortcut',
+            pathOnClient = first25 + '.txt',
+            title = first25,
             versionData = Blob.valueOf(fileContent),
             firstPublishLocationId = parentId
         );
@@ -51,6 +52,11 @@ public with sharing class FileDemoController {
 
     @AuraEnabled public static String readFromFile(Id contentVersionId ){
         String content;
+        ContentVersion cv = [SELECT versionData
+                             FROM ContentVersion
+                             WHERE Id = :contentVersionId];
+                             
+        content = cv.VersionData.toString();
         return content;   
     }
 
