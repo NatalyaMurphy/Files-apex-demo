@@ -1,5 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import { updateRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getRecord, getRecordNotifyChange } from 'lightning/uiRecordApi';
 import createFile from '@salesforce/apex/FileDemoController.createFile';
 import createFileFaster from '@salesforce/apex/FileDemoController.createFileFaster';
 import readFromFile from '@salesforce/apex/FileDemoController.readFromFile';
@@ -8,7 +10,7 @@ import deleteFile from '@salesforce/apex/FileDemoController.deleteFile';
 
 export default class FileDemo extends LightningElement {
     @track textContent;
-    contentVersionId;
+    @track contentVersionId;
     @api recordId;
     error;
 
@@ -19,7 +21,14 @@ export default class FileDemo extends LightningElement {
         .then((result) => {
             this.contentVersionId = result;
             this.error = undefined;
-            updateRecord({ fields: { Id: this.recordId } });
+            this.dispatchEvent(new CustomEvent('fileupdate'));
+            getRecordNotifyChange([{recordId: this.recordId}]);
+            const event = new ShowToastEvent({
+                title: 'Success',
+                message: 'File Saved',
+                variant: 'success'
+            });
+            this.dispatchEvent(event);
 
         })
         .catch((error) => {
@@ -35,6 +44,14 @@ export default class FileDemo extends LightningElement {
         .then((result) => {
             this.contentVersionId = result;
             this.error = undefined;
+            this.dispatchEvent(new CustomEvent('fileupdate'));
+            getRecordNotifyChange([{recordId: this.recordId}]);
+            const event = new ShowToastEvent({
+                title: 'Success',
+                message: 'File Saved',
+                variant: 'success'
+            });
+            this.dispatchEvent(event);
         })
         .catch((error) => {
             this.error = JSON.stringify(error);
@@ -55,6 +72,7 @@ export default class FileDemo extends LightningElement {
             } catch(e){
                 this.error = e;
             }
+            this.dispatchEvent(new CustomEvent('fileupdate'));
     
             this.error = undefined;
         })
@@ -70,11 +88,23 @@ export default class FileDemo extends LightningElement {
 
     deleteFile(){
         console.log('delete file');
-    }
+        console.log('read from file with ID ', this.contentVersionId);
+        deleteFile({ contentVersionId: this.contentVersionId })
+        .then((result) => {
+            this.contentVersionId = undefined;   
+            this.error = undefined;
+            this.dispatchEvent(new CustomEvent('fileupdate'));
+            const event = new ShowToastEvent({
+                title: 'Success',
+                message: 'File Deleted',
+                variant: 'warning'
+            });
+            this.dispatchEvent(event);
+        })
+        .catch((error) => {
+            this.error = JSON.stringify(error);
+        });
 
-    getTextValue(event){
-        this.textContent = event.detail.value;
-        console.log('content: ', this.textContent);
     }
 
 }

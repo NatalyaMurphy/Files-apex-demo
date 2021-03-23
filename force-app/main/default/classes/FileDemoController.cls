@@ -61,8 +61,12 @@ public with sharing class FileDemoController {
     }
 
     @AuraEnabled public static void deleteFile(Id contentVersionId ){
-        String content;
-        // return content;   
+        ContentDocument toDelete =
+        [SELECT Id 
+         FROM ContentDocument
+         WHERE LatestPublishedVersionId = :contentVersionId];
+
+         delete toDelete;
     }
     
 }
