@@ -1,0 +1,24 @@
+<template>
+    <lightning-card>
+        <lightning-textarea 
+        name="textForFile" 
+        label="Enter text to save in file"  
+        value={textContent} 
+        placeholder="type here..."
+        
+        >
+        {textContent}</lightning-textarea>
+        <lightning-button-group>
+            <lightning-button label="Create File - Long Way" onclick={createFile}></lightning-button>
+            <lightning-button label="Create File - Quick Way" onclick={createFileFaster}></lightning-button>
+            <lightning-button label="Read File Contents" onclick={readFromFile}></lightning-button>
+            <lightning-button label="Overwrite File" onclick={overwriteFile}></lightning-button>
+            <lightning-button label="Delete File" onclick={deleteFile}></lightning-button>
+        </lightning-button-group>
+
+        <template if:true={error}>
+            <div class="slds-text-color_destructive">{error}</div>
+        </template>
+    </lightning-card>
+    
+</template>
