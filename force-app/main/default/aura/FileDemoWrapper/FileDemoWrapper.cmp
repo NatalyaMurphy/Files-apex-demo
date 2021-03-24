@@ -1,0 +1,4 @@
+<aura:component implements="force:hasRecordId,flexipage:availableForRecordHome">
+    <c:fileDemo recordId="{!v.recordId}" onfileupdate="{!c.fireRefresh}"></c:fileDemo>
+
+</aura:component>	
