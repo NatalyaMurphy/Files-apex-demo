@@ -5,7 +5,7 @@ import { getRecord, getRecordNotifyChange } from 'lightning/uiRecordApi';
 import createFile from '@salesforce/apex/FileDemoController.createFile';
 import createFileFaster from '@salesforce/apex/FileDemoController.createFileFaster';
 import readFromFile from '@salesforce/apex/FileDemoController.readFromFile';
-import overwriteFile from '@salesforce/apex/FileDemoController.overwriteFile';
+import saveNewVersion from '@salesforce/apex/FileDemoController.saveNewVersion';
 import deleteFile from '@salesforce/apex/FileDemoController.deleteFile';
 
 export default class FileDemo extends LightningElement {
@@ -85,12 +85,12 @@ export default class FileDemo extends LightningElement {
         });
     }
 
-    overwriteFile(){
+    saveNewVersion(){
         console.log('overwrite file');
         this.status = 'Old ID: ' + this.contentVersionId;
         this.textContent = this.template.querySelector('lightning-textarea').value;
         console.log('create file with:\n', this.textContent);
-        overwriteFile({ 
+        saveNewVersion({ 
             fileContent: this.textContent, 
             parentId: this.recordId,
             contentVersionId: this.contentVersionId })
