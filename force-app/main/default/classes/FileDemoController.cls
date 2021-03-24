@@ -45,9 +45,11 @@ public with sharing class FileDemoController {
         return versionId;   
     }
 
-    @AuraEnabled public static Id overwriteFile(String fileContent, Id parentId, Id contentVersionId){
+    @AuraEnabled public static Id saveNewVersion(String fileContent, Id parentId, Id contentVersionId){
         Id versionId;
 
+        //NOTE: Not selecting FirstPublishLocationId
+        //link will auto-update with new version
         ContentVersion cv = [SELECT ContentLocation, pathOnClient, title, 
             ContentDocumentId
         FROM ContentVersion
