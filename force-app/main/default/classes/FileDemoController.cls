@@ -1,3 +1,7 @@
+/*
+This method will always work to create new content and is the method most frequently found online...
+...but check out the createFileFaster() method below
+*/
 public with sharing class FileDemoController {
     @AuraEnabled public static Id createFile(String fileContent, Id parentId){
         Id versionId;
@@ -28,6 +32,10 @@ public with sharing class FileDemoController {
         return versionId;   
     }
 
+    /*
+    This method works for creating a brand-new file and immediately linking it to ONE parent record.
+    The key is to populate the firstPublishLocationId with the parent record ID
+*/
     @AuraEnabled public static Id createFileFaster(String fileContent, Id parentId){
         Id versionId;
         String first25 = fileContent.left(25);
@@ -72,6 +80,10 @@ public with sharing class FileDemoController {
         content = cv.VersionData.toString();
         return content;   
     }
+
+    /*
+    WARNING: This removes all traces of the document AND removes all links to the document from all parent objects
+    */
 
     @AuraEnabled public static void deleteFile(Id contentVersionId ){
         ContentDocument toDelete =
